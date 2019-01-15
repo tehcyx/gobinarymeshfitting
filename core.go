@@ -12,8 +12,8 @@ import (
 type RenderInput struct {
 	window      *sdl.Window
 	context     sdl.GLContext
-	winWidth    int
-	winHeight   int
+	winWidth    int32
+	winHeight   int32
 	delta       float32
 	shouldClose bool
 }
@@ -39,9 +39,9 @@ func CoreInit(out *RenderInput) bool {
 	}
 	defer sdl.Quit()
 
-	sdl.GL_SetAttribute(sdl.GL_CONTEXT_PROFILE_MASK, sdl.GL_CONTEXT_PROFILE_CORE)
-	sdl.GL_SetAttribute(sdl.GL_CONTEXT_MAJOR_VERSION, 3)
-	sdl.GL_SetAttribute(sdl.GL_CONTEXT_MINOR_VERSION, 3)
+	sdl.GLSetAttribute(sdl.GL_CONTEXT_PROFILE_MASK, sdl.GL_CONTEXT_PROFILE_CORE)
+	sdl.GLSetAttribute(sdl.GL_CONTEXT_MAJOR_VERSION, 3)
+	sdl.GLSetAttribute(sdl.GL_CONTEXT_MINOR_VERSION, 3)
 
 	// init window
 	out.window, err = sdl.CreateWindow(winTitle, sdl.WINDOWPOS_UNDEFINED,
@@ -57,12 +57,12 @@ func CoreInit(out *RenderInput) bool {
 	defer out.window.Destroy()
 
 	// init context
-	out.context, err = sdl.GL_CreateContext(out.window)
+	out.context, err = out.window.GLCreateContext()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create context: %s\n", err)
 		return false
 	}
-	defer sdl.GL_DeleteContext(out.context)
+	defer sdl.GLDeleteContext(out.context)
 
 	// init gl
 	if err := gl.Init(); err != nil {
